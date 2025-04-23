@@ -1,1 +1,187 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Θεματικές Ενότητες της Οδύσσειας</title>
+    <style>
+        body {
+            font-family: 'Comfortaa', sans-serif;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            background-color: black;
+            color: gold;
+            padding: 20px;
+            font-size: 36px;
+            text-transform: none;
+        }
+        .creator, .director {
+            background-color: black;
+            color: gold;
+            padding: 10px;
+            font-size: 18px;
+        }
+        .emojis {
+            font-size: 30px;
+            margin-top: 20px;
+        }
+        .score-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .question-container {
+            margin: 30px;
+        }
+        .question {
+            margin: 15px 0;
+            padding: 15px;
+            font-size: 120%;
+            background-color: #0b3d91;
+            color: gold;
+            border-radius: 10px;
+            position: relative;
+            font-weight: bold;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8), -1px -1px 0px rgba(255, 255, 255, 0.2);
+        }
+        .question-number {
+            text-decoration: underline;
+        }
+        .emoji {
+            display: block;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .true, .false {
+            font-size: 20px;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #777;
+            color: white;
+            border: none;
+        }
+        .true:hover, .false:hover {
+            background-color: #999;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="creator">
+    Δημιουργία/Επιμέλεια: Παναγιώτης Δόμβρος (CC BY-NC)
+</div>
+<div class="director">
+    Διευθυντής 1ου Γυμνασίου Πυλαίας
+</div>
+
+<h1>Θεματικές Ενότητες της Οδύσσειας</h1>
+
+<div class="emojis">
+    🏺 🏛️ ⚔️ 🛡️ 📜
+</div>
+
+<div class="score-box">
+    Σκορ: <span id="score">0</span> / 100
+</div>
+
+<div class="question-container"></div>
+
+<audio id="successAudio" src="success-sound.mp3"></audio>
+<audio id="failAudio" src="fail-sound.mp3"></audio>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let score = 0;
+        let currentQuestion = 0;
+        const questions = [
+            { question: 'Το έπος είναι ένα μικρό ποίημα που περιγράφει μόνο πολεμικές συγκρούσεις.', answer: false },
+            { question: 'Η Οδύσσεια είναι γραμμένη σε έμμετρο λόγο, συνήθως σε εξάμετρο στίχο.', answer: true },
+            { question: 'Οι θεοί στα ομηρικά έπη παίζουν παθητικό ρόλο και δεν επηρεάζουν την πλοκή.', answer: false },
+            { question: 'Η Οδύσσεια ξεκινά in medias res, δηλαδή από τη μέση της δράσης.', answer: true },
+            { question: 'Η κοινωνία στα ομηρικά έπη βασίζεται στην ισότητα όλων των ανθρώπων.', answer: false },
+            { question: 'Ο ραψωδός απαγγέλλει έτοιμα ποιήματα χωρίς μουσική συνοδεία.', answer: true },
+            { question: 'Ο Όμηρος ήταν σίγουρα μόνο ένας ποιητής και έγραψε και την Ιλιάδα και την Οδύσσεια.', answer: false },
+            { question: 'Τα ομηρικά έπη καταγράφηκαν επίσημα για πρώτη φορά τον 6ο αιώνα π.Χ. στην Αθήνα.', answer: true },
+            { question: 'Η Οδύσσεια περιλαμβάνει 24 ραψωδίες, όσες και τα γράμματα του ελληνικού αλφαβήτου.', answer: true },
+            { question: 'Ο νόστος είναι η ιστορία της Πηνελόπης που ταξιδεύει για να βρει τον Οδυσσέα.', answer: false },
+            { question: 'Η φιλοξενία (ξενία) θεωρείται ιερός νόμος στην Οδύσσεια.', answer: true },
+            { question: 'Οι μνηστήρες παραβιάζουν τους κανόνες της ξενίας και στο τέλος τιμωρούνται.', answer: true },
+            { question: 'Ο Οδυσσέας διακρίνεται μόνο για τη σωματική του δύναμη.', answer: false },
+            { question: 'Η Πηνελόπη περιμένει πιστά τον Οδυσσέα για 20 χρόνια.', answer: true },
+            { question: 'Ο Οδυσσέας επιλέγει να μείνει με την Καλυψώ για να αποφύγει τα βάσανα της επιστροφής.', answer: false },
+            { question: 'Η τιμωρία των μνηστήρων γίνεται ως αποκατάσταση της τιμής και της τάξης.', answer: true },
+            { question: 'Ο Οδυσσέας αποκαλύπτει την ταυτότητά του αμέσως μόλις φτάνει στην Ιθάκη.', answer: false },
+            { question: 'Η μοναξιά και η απομόνωση είναι προβλήματα που απασχολούν τον Οδυσσέα.', answer: true },
+            { question: 'Η εξυπνάδα του Οδυσσέα φαίνεται, για παράδειγμα, όταν τυφλώνει τον Κύκλωπα.', answer: true },
+            { question: 'Οι σύντροφοί του Οδυσσέα δείχνουν συνεχώς αυτοσυγκράτηση και υπακοή.', answer: false },
+            { question: 'Το ταξίδι του Οδυσσέα είναι και ένα ταξίδι αυτογνωσίας.', answer: true },
+            { question: 'Οι Φαίακες αρνούνται να φιλοξενήσουν τον Οδυσσέα γιατί είναι ξένος.', answer: false },
+            { question: 'Η έννοια της δικαιοσύνης παραμένει αναλλοίωτη από την αρχαιότητα μέχρι σήμερα.', answer: false },
+            { question: 'Ο Οδυσσέας δείχνει προτεραιότητα στην οικογένειά του και όχι σε αθανασία ή θεϊκή ζωή.', answer: true },
+            { question: 'Η αδυναμία και οι πειρασμοί είναι στοιχεία που αντιμετωπίζουν μόνο οι σύντροφοι του Οδυσσέα.', answer: false }
+        ];
+
+        const ancientEmojis = ['🏺', '🏛️', '⚔️', '🛡️', '📜'];
+        const container = document.querySelector('.question-container');
+
+        function showQuestion(index) {
+            container.innerHTML = '';
+            const q = questions[index];
+            const emojiDiv = document.createElement('div');
+            emojiDiv.classList.add('emoji');
+            emojiDiv.textContent = ancientEmojis[index % ancientEmojis.length];
+
+            const qDiv = document.createElement('div');
+            qDiv.classList.add('question');
+            qDiv.innerHTML = `<span class="question-number">Ερώτηση ${index + 1}:</span> ${q.question}`;
+
+            const btnTrue = document.createElement('button');
+            btnTrue.classList.add('true');
+            btnTrue.textContent = 'Σωστό';
+            btnTrue.onclick = () => checkAnswer(true);
+
+            const btnFalse = document.createElement('button');
+            btnFalse.classList.add('false');
+            btnFalse.textContent = 'Λάθος';
+            btnFalse.onclick = () => checkAnswer(false);
+
+            qDiv.prepend(emojiDiv);
+            container.appendChild(qDiv);
+            qDiv.appendChild(document.createElement('br'));
+            qDiv.appendChild(document.createElement('br'));
+            qDiv.appendChild(btnTrue);
+            qDiv.appendChild(btnFalse);
+        }
+
+        function checkAnswer(isCorrect) {
+            const correct = questions[currentQuestion].answer;
+            const audio = isCorrect === correct ? document.getElementById('successAudio') : document.getElementById('failAudio');
+            audio.play();
+            const qDiv = container.querySelector('.question');
+            qDiv.style.backgroundColor = isCorrect === correct ? 'green' : 'red';
+            if (isCorrect === correct) score += 4;
+            document.getElementById('score').textContent = score;
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) showQuestion(currentQuestion);
+            }, 1000);
+        }
+
+        showQuestion(0);
+    });
+</script>
+</body>
+</html>
 
